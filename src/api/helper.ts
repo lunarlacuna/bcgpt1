@@ -14,7 +14,7 @@ export const parseEventSource = (
         .split('\n')
         .map((line) => line.replace(/^data: /, ''))
         .join('');
-      if (jsonString === '[DONE]' || jsonString === ': joining queue') return jsonString as SpecialString;
+      if (jsonString === '[DONE]' || jsonString === ': joining queue') return jsonString;
       try {
         const json = JSON.parse(jsonString);
         return json;

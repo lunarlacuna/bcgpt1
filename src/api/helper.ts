@@ -1,8 +1,6 @@
 import { EventSourceData } from '@type/api';
 
-export const parseEventSource = (
-  data: string
-): '[DONE]' | EventSourceData[] => {
+export const parseEventSource = (data: string): EventSourceData[] => {
   const result = data
     .split('\n\n')
     .filter(Boolean)
@@ -12,13 +10,15 @@ export const parseEventSource = (
         .map((line) => line.replace(/^data: /, ''))
         .join('');
       if (jsonString === '[DONE]') return jsonString;
+      if (jsonString === ': joining queue') return null;
       try {
         const json = JSON.parse(jsonString);
         return json;
       } catch {
-        return jsonString;
+        return null;
       }
-    });
+    })
+    .filter((chunk) => !!chunk);
   return result;
 };
 

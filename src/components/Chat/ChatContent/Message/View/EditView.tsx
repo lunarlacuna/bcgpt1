@@ -43,21 +43,13 @@ const EditView = ({
 
     if (e.key === 'Enter' && !isMobile && !e.nativeEvent.isComposing) {
       const enterToSubmit = useStore.getState().enterToSubmit;
-      if (sticky) {
-        if (
-          (enterToSubmit && !e.shiftKey) ||
-          (!enterToSubmit && (e.ctrlKey || e.shiftKey))
-        ) {
-          e.preventDefault();
-          handleSaveAndSubmit();
-          resetTextAreaHeight();
-        }
-      } else {
-        if (e.ctrlKey && e.shiftKey) {
-          e.preventDefault();
-          handleSaveAndSubmit();
-          resetTextAreaHeight();
-        } else if (e.ctrlKey || e.shiftKey) handleSave();
+      if (
+        (enterToSubmit && !e.shiftKey) ||
+        (!enterToSubmit && (e.ctrlKey || e.shiftKey))
+      ) {
+        e.preventDefault();
+        handleSaveAndSubmit();
+        resetTextAreaHeight();
       }
     }
   };

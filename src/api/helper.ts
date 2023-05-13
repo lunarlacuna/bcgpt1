@@ -14,16 +14,24 @@ export const parseEventSource = (
         .split('\n')
         .map((line) => line.replace(/^data: /, ''))
         .join('');
-      if (jsonString === '[DONE]' || jsonString === ': joining queue') return jsonString;
+
+      if (jsonString === '[DONE]' || jsonString === ': joining queue') {
+        // Return the special string as-is
+        return jsonString as SpecialString;
+      }
+
+      // Check if the JSON string is valid
       try {
         const json = JSON.parse(jsonString);
         return json;
       } catch {
+        // If the JSON string is not valid, return it as a plain string
         return jsonString;
       }
     });
   return result;
 };
+
 
 
 export const createMultipartRelatedBody = (

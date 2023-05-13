@@ -1,27 +1,24 @@
 import { EventSourceData } from '@type/api';
 
 export const parseEventSource = (
-  data: string,
-  queueMarker = '[DONE]'
-): EventSourceData[] => {
+  data: string
+): '[DONE]' | EventSourceData[] => {
   const result = data
     .split('\n\n')
-    .filter(Boolean)
+    .filter((chunk) => chunk && !chunk.includes(': joining queue'))
     .map((chunk) => {
       const jsonString = chunk
         .split('\n')
         .map((line) => line.replace(/^data: /, ''))
         .join('');
-      if (jsonString === queueMarker) return null; // if the chunk equals the queue marker, replace with null
+      if (jsonString === '[DONE]') return jsonString;
       try {
         const json = JSON.parse(jsonString);
         return json;
       } catch {
         return jsonString;
       }
-    })
-    .filter((value): value is EventSourceData => value !== null); // filter out null values and return only EventSourceData objects
-    
+    });
   return result;
 };
 

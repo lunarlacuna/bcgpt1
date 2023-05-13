@@ -111,7 +111,7 @@ const useSubmit = () => {
           );
           partial = '';
 
-          if (result === '[DONE]' || result === ': joining queue' || done) {
+          if (result === '[DONE]'  || done) {
             reading = false;
           } else {
             const resultString = result.reduce((output: string, curr) => {

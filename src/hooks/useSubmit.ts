@@ -111,8 +111,8 @@ const useSubmit = () => {
           );
           partial = '';
 
-if (result.includes('[DONE]') || done) {
-  reading = false;
+          if (result.includes('[DONE]') || done) {
+            reading = false;
           } else {
             const resultString = result.reduce((output: string, curr) => {
               if (typeof curr === 'string') {

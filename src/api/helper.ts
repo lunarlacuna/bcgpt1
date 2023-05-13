@@ -12,7 +12,7 @@ export const parseEventSource = (
         .split('\n')
         .map((line) => line.replace(/^data: /, ''))
         .join('');
-      if (jsonString === queueMarker) return; // if the chunk equals the queue marker, skip processing
+      if (jsonString === queueMarker) return null; // if the chunk equals the queue marker, replace with null
       try {
         const json = JSON.parse(jsonString);
         return json;
@@ -20,7 +20,7 @@ export const parseEventSource = (
         return jsonString;
       }
     })
-    .filter(Boolean) as EventSourceData[]; // to remove any undefined values
+    .filter((value): value is EventSourceData => value !== null); // filter out null values and return only EventSourceData objects
     
   return result;
 };

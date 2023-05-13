@@ -1,8 +1,11 @@
 import { EventSourceData } from '@type/api';
 
+// Add type alias for special string literals
+type SpecialString = '[DONE]' | ': joining queue';
+
 export const parseEventSource = (
   data: string
-): '[DONE]' | ': joining queue' | EventSourceData[] => {
+): SpecialString | EventSourceData[] => {
   const result = data
     .split('\n\n')
     .filter(Boolean)
@@ -11,7 +14,7 @@ export const parseEventSource = (
         .split('\n')
         .map((line) => line.replace(/^data: /, ''))
         .join('');
-      if (jsonString === '[DONE]' || jsonString === ': joining queue') return jsonString;
+      if (jsonString === '[DONE]' || jsonString === ': joining queue') return jsonString as SpecialString;
       try {
         const json = JSON.parse(jsonString);
         return json;
@@ -21,6 +24,7 @@ export const parseEventSource = (
     });
   return result;
 };
+
 
 export const createMultipartRelatedBody = (
   metadata: object,

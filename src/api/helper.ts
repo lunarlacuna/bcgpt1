@@ -3,33 +3,24 @@ import { EventSourceData } from '@type/api';
 // Add type alias for special string literals
 type SpecialString = '[DONE]' | ': joining queue';
 
-export const parseEventSource = (
-  data: string
-): SpecialString | EventSourceData[] => {
-  const result = data
-    .split('\n\n')
-    .filter(Boolean)
-    .map((chunk) => {
-      const jsonString = chunk
-        .split('\n')
-        .map((line) => line.replace(/^data: /, ''))
-        .join('');
+export const parseEventSource = (data: string): EventSourceData[] => {
+  const jsonString = `[${data
+    .split('\n')
+    .filter((line) => !!line && !line.startsWith(':'))
+    .map((line) => line.replace(/^data: /, ''))
+    .join(',')}]`;
 
-      if (jsonString === '[DONE]' || jsonString === ': joining queue') {
-        // Return the special string as-is
-        return jsonString as SpecialString;
-      }
+  try {
+    const json = JSON.parse(jsonString);
 
-      // Check if the JSON string is valid
-      try {
-        const json = JSON.parse(jsonString);
-        return json;
-      } catch {
-        // If the JSON string is not valid, return it as a plain string
-        return jsonString;
-      }
-    });
-  return result;
+    if (Array.isArray(json)) {
+      return json.filter((data) => data && typeof data === 'object') as EventSourceData[];
+    } else {
+      throw new Error();
+    }
+  } catch (error) {
+    throw new Error('Failed to parse data from the event source.');
+  }
 };
 
 

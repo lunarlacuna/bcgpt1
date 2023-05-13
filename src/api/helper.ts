@@ -1,8 +1,9 @@
 import { EventSourceData } from '@type/api';
 
 export const parseEventSource = (
-  data: string
-): '[DONE]' | EventSourceData[] => {
+  data: string,
+  queueMarker = '[DONE]'
+): EventSourceData[] => {
   const result = data
     .split('\n\n')
     .filter(Boolean)
@@ -11,14 +12,16 @@ export const parseEventSource = (
         .split('\n')
         .map((line) => line.replace(/^data: /, ''))
         .join('');
-      if (jsonString === '[DONE]') return jsonString;
+      if (jsonString === queueMarker) return; // if the chunk equals the queue marker, skip processing
       try {
         const json = JSON.parse(jsonString);
         return json;
       } catch {
         return jsonString;
       }
-    });
+    })
+    .filter(Boolean) as EventSourceData[]; // to remove any undefined values
+    
   return result;
 };
 
